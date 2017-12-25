@@ -1,38 +1,54 @@
 package de.mhaug.phd.btcwallet
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import java.security.Security
-import javax.crypto.KeyGenerator
-import javax.crypto.SecretKey
-import javax.crypto.Cipher
-import java.awt.SystemColor.text
-import java.nio.charset.Charset
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.security.KeyPairGenerator
 import java.security.SecureRandom
-import javax.crypto.spec.IvParameterSpec
-
-/**
- * Blocklänge in Bytes
- */
-val BLOCKLENGTH: Int = 16
-val algorithm = "AES"
-val cryptoprovider = "BC"
+import java.security.Security
+import java.security.Signature
 
 fun main(args : Array<String>) {
-    val message = args[0]
     Security.addProvider(BouncyCastleProvider())
 
+    /**
+     * Blocklänge in Bytes
+     */
+    val BLOCKLENGTH: Int = 16
+    val algorithm = "ECDSA"
+    val cryptoprovider = "BC"
+
+    // Get instance and initialize a KeyPairGenerator object.
     val prng = SecureRandom()
-    val keygenerator = KeyGenerator.getInstance(algorithm, cryptoprovider)
-    val key = keygenerator.generateKey()
-    val cipher: Cipher = Cipher.getInstance("$algorithm/CBC/PKCS5Padding", cryptoprovider)
+    val keyGen = KeyPairGenerator.getInstance("DSA", cryptoprovider)
+    keyGen.initialize(1024, prng)
 
-    val iv = ByteArray(BLOCKLENGTH)
-    cipher.init(Cipher.ENCRYPT_MODE, key, IvParameterSpec(iv))
-    val textEncrypted: ByteArray = cipher.doFinal(message.toByteArray())
+    // Get a PrivateKey from the generated key pair.
+    val keyPair = keyGen.generateKeyPair()
 
-    cipher.init(Cipher.DECRYPT_MODE, key, IvParameterSpec(iv))
-    val textDecrypted: ByteArray = cipher.doFinal(textEncrypted)
-    println(textDecrypted.toString(Charset.defaultCharset()))
+    // Get an instance of Signature object and initialize it.
+    var signature = Signature.getInstance("SHA1withDSA", cryptoprovider)
+    signature.initSign(keyPair.private)
+
+    // Supply the data to be signed to the Signature object
+    // using the update() method and generate the digital
+    // signature.
+    var bytes = Files.readAllBytes(Paths.get("settings.gradle"))
+    signature.update(bytes)
+    val digitalSignature = signature.sign()
+
+//-----------------------
+    bytes = Files.readAllBytes(Paths.get("settings.gradle"))
+    signature = Signature.getInstance("SHA1withDSA", cryptoprovider)
+    signature.initVerify(keyPair.public)
+    signature.update(bytes)
+
+    val verified = signature.verify(digitalSignature)
+    if (verified) {
+        println("Data verified.")
+    } else {
+        println("Cannot verify data.")
+    }
 }
 
 
