@@ -25,10 +25,7 @@
         compile group: 'org.bouncycastle', name: 'bcprov-jdk16', version: '1.46'
         testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.0.2'
         testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.0.2'
-        testRuntime("org.junit.platform:junit-platform-launcher:1.0.2")
-        testRuntime("org.junit.vintage:junit-vintage-engine:4.12.2")
-        //    testCompile group: 'org.junit.platform', name: 'junit-platform-runner', version: ''
-    //    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.0.2'
+        testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.0.2'
     }
 
     compileKotlin {
