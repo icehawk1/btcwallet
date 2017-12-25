@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/btcwallet.iml" filepath="$PROJECT_DIR$/.idea/modules/btcwallet.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/btcwallet_main.iml" filepath="$PROJECT_DIR$/.idea/modules/btcwallet_main.iml" group="btcwallet" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/btcwallet_test.iml" filepath="$PROJECT_DIR$/.idea/modules/btcwallet_test.iml" group="btcwallet" />
+    </modules>
+  </component>
+</project>
