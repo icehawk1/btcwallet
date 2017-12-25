@@ -18,7 +18,7 @@ object CryptoUtil {
         keyGen.initialize(1024, prng)
     }
 
-    fun generateKey(): KeyPair = TODO()
-    fun signData(data: ByteArray, keys: KeyPair): ByteArray = TODO()
-    fun verifySignature(data: ByteArray, keys: KeyPair, signature: ByteArray): Boolean = TODO()
+    fun generateKey(): KeyPair = TODO("implement")
+    fun signData(data: ByteArray, keys: KeyPair): ByteArray = TODO("implement")
+    fun verifySignature(data: ByteArray, keys: KeyPair, signature: ByteArray): Boolean = TODO("implement")
 }
