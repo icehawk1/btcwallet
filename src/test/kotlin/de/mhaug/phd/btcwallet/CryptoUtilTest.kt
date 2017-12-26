@@ -27,3 +27,4 @@ class CryptoUtilTest {
         assertFalse(CryptoUtil.verifySignature(verifiedmessage, keys.public, signature))
     }
 }
+

@@ -24,7 +24,7 @@ dependencies {
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.0.2'
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.0.2'
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.0.2'
-    testCompile "org.jetbrains.kotlin:kotlin-test-junit:1.1.2"
+   // testCompile "org.jetbrains.kotlin:kotlin-test-junit:1.1.2"
     compile group: 'org.tmatesoft.sqljet', name: 'sqljet', version: '1.1.10'
 }
 
