@@ -4,18 +4,18 @@ import org.bouncycastle.jce.ECNamedCurveTable
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.*
 
-
 object CryptoUtil {
     init {
         Security.addProvider(BouncyCastleProvider())
     }
 
     val prng = SecureRandom()
-    val algorithm = "SHA256WITHECDSA"
+    val algorithm = "NONEwithECDSA"
     val cryptoprovider = "BC"
 
     val keyGen = KeyPairGenerator.getInstance("ECDSA", cryptoprovider)
     init {
+        // Das ist die Kurve die bei Bitcoin verwendet wird
         keyGen.initialize(ECNamedCurveTable.getParameterSpec("secp256k1"), prng)
     }
 

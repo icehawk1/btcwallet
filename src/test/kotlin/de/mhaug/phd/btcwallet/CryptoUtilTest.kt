@@ -3,7 +3,6 @@ package de.mhaug.phd.btcwallet
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -13,8 +12,6 @@ class CryptoUtilTest {
         val keys = CryptoUtil.generateKey()
         val message = Files.readAllBytes(Paths.get("settings.gradle"))
         val signature = CryptoUtil.signData(message, keys)
-        println(signature.joinToString())
-        println(message.toString(Charset.defaultCharset()))
         assertTrue(CryptoUtil.verifySignature(message, keys.public, signature))
     }
 

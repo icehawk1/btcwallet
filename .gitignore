@@ -52,3 +52,4 @@ gradle-app.setting
 
 #ownstuff
 .idea/libraries
+/src/main/kotlin/de/mhaug/phd/btcwallet/Exploring.kt
