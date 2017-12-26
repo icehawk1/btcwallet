@@ -26,4 +26,3 @@ enum class AddressType {
     abstract val prefix: Int
 }
 
-class Base58Parser
