@@ -1,8 +1,8 @@
 package de.mhaug.phd.btcwallet
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import java.util.*
 
 class Base58ParserTest {
     val instance = Base58Parser()
@@ -14,7 +14,7 @@ class Base58ParserTest {
 
     @Test
     fun testSimpleDecode() {
-        assertEquals("abc".toByteArray(), instance.decode("ZiCa", false))
+        assertTrue(Arrays.equals("abc".toByteArray(), instance.decode("ZiCa", false)))
     }
 
     @Test
@@ -32,3 +32,4 @@ class Base58ParserTest {
         assertThrows(IllegalArgumentException::class.java) { instance.decode(encoded, true) }
     }
 }
+
