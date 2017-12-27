@@ -1,27 +1,33 @@
 package de.mhaug.phd.btcwallet
 
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
 import java.util.*
 
 
 class BitcoinAddress
 
 class Base58Parser {
-    private val ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+    private val ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".toByteArray(StandardCharsets.UTF_8)
     private val ENCODED_ZERO = ALPHABET[0]
 
     private val INDEXES = IntArray(128)
 
     init {
         Arrays.fill(INDEXES, -1)
-        for (i in 0 until ALPHABET.length) {
+        for (i in 0 until ALPHABET.size) {
             INDEXES[ALPHABET[i].toInt()] = i
         }
     }
 
     fun encode(input: ByteArray, checksum: Boolean = true): String {
-        if (input.isEmpty()) return ""
-        var raw = input
+        if (input.isEmpty() && !checksum) {
+            return ""
+        } else if (input.isEmpty() && checksum) {
+            throw IllegalArgumentException("Checksum is incorrect for: " + input)
+        }
 
+        val raw = Arrays.copyOf(input, input.size) // since we modify it in-place
         // Count leading zeros.
         var zeros: Int = 0
         while (zeros < raw.size && raw[zeros] == 0.toByte()) {
@@ -29,8 +35,7 @@ class Base58Parser {
         }
 
         // Convert base-256 digits to base-58 digits (plus conversion to ASCII characters)
-        raw = Arrays.copyOf(raw, raw.size) // since we modify it in-place
-        val encoded = CharArray(raw.size * 2) // upper bound
+        val encoded = ByteArray(raw.size * 2) // upper bound
         var outputStart = encoded.size
         var inputStart: Int = zeros
         while (inputStart < raw.size) {
@@ -40,7 +45,6 @@ class Base58Parser {
             }
         }
 
-
         // Preserve exactly as many leading encoded zeros in output as there were leading zeros in input.
         while (outputStart < encoded.size && encoded[outputStart] == ENCODED_ZERO) {
             ++outputStart
@@ -48,14 +52,23 @@ class Base58Parser {
         while (--zeros >= 0) {
             encoded[--outputStart] = ENCODED_ZERO
         }
+
         // Return encoded string (including encoded leading zeros).
-        return String(encoded, outputStart, encoded.size - outputStart)
+        val result = Arrays.copyOfRange(encoded, outputStart, encoded.size - outputStart)
+
+        if (checksum) {
+            val checksum = computeChecksum(result)
+            return String(result + checksum)
+        } else return String(result)
     }
 
     fun decode(encoded: String, checksum: Boolean = true): ByteArray {
-        if (encoded.isEmpty()) {
+        if (encoded.isEmpty() && !checksum) {
             return ByteArray(0)
+        } else if (encoded.isEmpty() && checksum) {
+            throw IllegalArgumentException("Checksum is incorrect for: " + encoded)
         }
+
         // Convert the base58-encoded ASCII chars to a base58 byte sequence (base58 digits).
         val input58 = ByteArray(encoded.length)
         for (i in 0 until encoded.length) {
@@ -66,11 +79,13 @@ class Base58Parser {
             }
             input58[i] = digit.toByte()
         }
+
         // Count leading zeros.
         var zeros = 0
         while (zeros < input58.size && input58[zeros].toInt() == 0) {
             ++zeros
         }
+
         // Convert base-58 digits to base-256 digits.
         val decoded = ByteArray(encoded.length)
         var outputStart = decoded.size
@@ -81,14 +96,25 @@ class Base58Parser {
                 ++inputStart // optimization - skip leading zeros
             }
         }
+
         // Ignore extra leading zeroes that were added during the calculation.
         while (outputStart < decoded.size && decoded[outputStart].toInt() == 0) {
             ++outputStart
         }
+
         // Return decoded data (including original number of leading zeros).
         return Arrays.copyOfRange(decoded, outputStart - zeros, decoded.size)
     }
 
+    /**
+     * Computes the checksum for Base58Check
+     * @param input Die Rohdaten ohne Prefix und ohne Checksum
+     */
+    private fun computeChecksum(input: ByteArray): ByteArray {
+        val digest = MessageDigest.getInstance("SHA-256")
+        val result = digest.digest(digest.digest(input))
+        return result.sliceArray(0..3)
+    }
 
     /**
      * Divides a number, represented as an array of bytes each containing a single digit
