@@ -2,7 +2,6 @@ package de.mhaug.phd.btcwallet
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import java.util.*
 
 class Base58ParserTest {
     val instance = Base58Parser()
@@ -14,7 +13,7 @@ class Base58ParserTest {
 
     @Test
     fun testSimpleDecode() {
-        assertTrue(Arrays.equals("abc".toByteArray(), instance.decode("ZiCa", false)))
+        assertArrayEquals("abc".toByteArray(), instance.decode("ZiCa", false))
     }
 
     @Test
@@ -22,7 +21,7 @@ class Base58ParserTest {
         val input = "sadfdas dsazfoguziol32 dsauiofhou324 xcyvno84378".toByteArray()
         val encoded = instance.encode(input, true)
         val decoded = instance.decode(encoded, true)
-        assertEquals(input, decoded)
+        assertArrayEquals(input, decoded)
     }
 
     @Test
